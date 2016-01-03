@@ -34,6 +34,7 @@ public class Game {
     }
 
     public void handlePieceTouch(ChessPiece chessPiece) {
+
         Log.d("myTag", String.valueOf(chessPiece) + "handlePieceTouch");
 
         if (lastPressedPiece == null){
@@ -52,18 +53,21 @@ public class Game {
             if (chessPiece.isWhite() != lastPressedPiece.isWhite() || chessPiece.isEmpty()) {
                 Log.d("myTag", "Here1");
 
-                if (lastPressedPiece.isMoveValid(lastPressedPiece.getX(), lastPressedPiece.getY(), chessPiece.getX(), chessPiece.getY())) {
+                if (lastPressedPiece.isMovePossible(lastPressedPiece.getX(), lastPressedPiece.getY(), chessPiece.getX(), chessPiece.getY())) {
                     Log.d("myTag", "here2");
+                    int xChessPiece = chessPiece.getX();
+                    int yChessPiece = chessPiece.getY();
                     lastPressedPiece.setIsSelected(false);
-                    Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
-                    Log.d("chessPiece", String.valueOf(chessPiece.getX()) + " " + String.valueOf(chessPiece.getY()));
+                   // Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
+                  //  Log.d("chessPiece", String.valueOf(chessPiece.getX()) + " " + String.valueOf(chessPiece.getY()));
                     board.clearPieceAtPosition(lastPressedPiece.getX(), lastPressedPiece.getY());
-                    Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
-                    Log.d("chessPiece", String.valueOf(chessPiece.getX()) + " " + String.valueOf(chessPiece.getY()));
-
-                    board.changePieceAtPosition(chessPiece.getX(), chessPiece.getY(), lastPressedPiece);
-                    Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
-                    Log.d("chessPiece", String.valueOf(chessPiece.getX()) + " " + String.valueOf(chessPiece.getY()));
+                   // Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
+                  //  Log.d("chessPiece", String.valueOf(chessPiece.getX()) + " " + String.valueOf(chessPiece.getY()));
+                   // Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
+                  //  Log.d("coordinates chessPiece", String.valueOf(xChessPiece) + " " + String.valueOf(yChessPiece));
+                    board.changePieceAtPosition(xChessPiece, yChessPiece, lastPressedPiece);
+                  //  Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
+                  //  Log.d("chessPiece", String.valueOf(chessPiece.getX()) + " " + String.valueOf(chessPiece.getY()));
                     whitePlayerTurn = !whitePlayerTurn;
                     lastPressedPiece = null;
                 } else {

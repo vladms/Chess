@@ -19,16 +19,14 @@ public abstract class ChessPiece {
         this.y = y;
     }
 
-    public boolean isMoveValid(int fromX, int fromY, int toX, int toY){
+    public boolean isMovePossible(int fromX, int fromY, int toX, int toY){
         boolean result = true;
         if(toX == fromX && toY == fromY)
             result = false;
         if(toX <= 0 || toX > 8 || fromX <= 0 || fromX > 8 || toY <= 0 || toY > 8 || fromY <= 0 || fromY > 8)
             result =  false;
         return result;
-
     }
-
 
     public int getX() {
         return x;

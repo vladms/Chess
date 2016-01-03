@@ -22,12 +22,13 @@ public class Bishop extends ChessPiece {
     }
 
     @Override
-    public boolean isMoveValid(int fromX, int fromY, int toX, int toY) {
-        boolean result = false;
-        result = super.isMoveValid(fromX, fromY, toX, toY);
+    public boolean isMovePossible(int fromX, int fromY, int toX, int toY) {
+        if (super.isMovePossible(fromX, fromY, toX, toY) == false)
+            return false;
 
-        if(toX - fromX != toY - fromY)
-            result = false;
-        return result;
+        if (Math.abs(toX - fromX) == Math.abs(toY - fromY))
+            return true;
+
+        return false;
     }
 }

@@ -20,9 +20,9 @@ public class EmptyPiece extends ChessPiece{
     }
 
     @Override
-    public boolean isMoveValid(int fromX, int fromY, int toX, int toY) {
+    public boolean isMovePossible(int fromX, int fromY, int toX, int toY) {
         boolean result = false;
-        result = super.isMoveValid(fromX, fromY, toX, toY);
-        return result;
+        result = super.isMovePossible(fromX, fromY, toX, toY);
+        return true;
     }
 }

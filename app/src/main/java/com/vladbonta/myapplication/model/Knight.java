@@ -22,13 +22,21 @@ public class Knight extends ChessPiece {
     }
 
     @Override
-    public boolean isMoveValid(int fromX, int fromY, int toX, int toY) {
-        boolean result = false;
-        result = super.isMoveValid(fromX, fromY, toX, toY);
-        if(toX != fromX - 1 && toX != fromX + 1 && toX != fromX + 2 && toX != fromX - 2)
-            result = false;
-        if(toY != fromY - 2 && toY != fromY + 2 && toY != fromY - 1 && toY != fromY + 1)
-            result = false;
-        return result;
+    public boolean isMovePossible(int fromX, int fromY, int toX, int toY) {
+        if(super.isMovePossible(fromX, fromY, toX, toY) == false)
+            return false;
+
+        if ((fromX == toX - 2 && fromY == toY + 1) ||
+                (fromX == toX - 1 && fromY == toY + 2) ||
+                (fromX == toX + 1 && fromY == toY + 2) ||
+                (fromX == toX + 2 && fromY == toY + 1) ||
+                (fromX == toX + 2 && fromY == toY - 1) ||
+                (fromX == toX + 1 && fromY == toY - 2) ||
+                (fromX == toX - 1 && fromY == toY - 2) ||
+                (fromX == toX - 2 && fromY == toY - 1)
+                )
+            return true;
+
+        return false;
     }
 }

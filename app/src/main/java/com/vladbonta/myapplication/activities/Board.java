@@ -1,6 +1,5 @@
 package com.vladbonta.myapplication.activities;
 
-import android.util.Log;
 import android.view.View;
 
 import com.vladbonta.myapplication.model.Bishop;
@@ -18,8 +17,8 @@ import java.util.ArrayList;
  * @author VladBonta on 27/12/15.
  */
 public class Board implements View.OnClickListener{
-    private ChessPiece emptyChessPiece = new EmptyPiece(false, 0, 0);
-    private ArrayList<ChessPiece> pieces;
+    private EmptyPiece emptyChessPiece = new EmptyPiece(false, 0, 0);
+    private static ArrayList<ChessPiece> pieces;
     private Game mGame;
 
     public Board(Game game) {
@@ -31,7 +30,7 @@ public class Board implements View.OnClickListener{
 
     public void addPiecesOnBoard() {
         pieces = new ArrayList<>();
-        ChessPiece piece = new EmptyPiece(false, 0, 0);
+        EmptyPiece piece = new EmptyPiece(false, 0, 0);
         pieces.add(new Rook(false, 1, 1));
         pieces.add(new Knight(false, 1, 2));
         pieces.add(new Bishop(false, 1, 3));
@@ -61,8 +60,7 @@ public class Board implements View.OnClickListener{
 
 
     public void clearPieceAtPosition(int x, int y){
-        emptyChessPiece.setX(x);
-        emptyChessPiece.setY(y);
+        emptyChessPiece = new EmptyPiece(false, x, y);
         int pieceIndex = (x - 1) * 8 + (y - 1);
         pieces.remove(pieceIndex);
         pieces.add(pieceIndex, emptyChessPiece);
@@ -81,11 +79,10 @@ public class Board implements View.OnClickListener{
     }
 
     @Override
-
     public void onClick(View view) {
-        Log.d("myTag", String.valueOf(view) + " " + String.valueOf(view.getId()) + "on click view");
-        Log.d("myTag", String.valueOf(view.getId()) + " " + String.valueOf(view.getPivotY()) + "on click view");
+        int pieceIndex = (int)view.getTag();
 
-        //mGame.handlePieceTouch(view);
+        ChessPiece chessPiece = pieces.get(pieceIndex);
+        mGame.handlePieceTouch(chessPiece);
     }
 }

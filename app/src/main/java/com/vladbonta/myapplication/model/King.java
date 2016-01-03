@@ -22,9 +22,9 @@ public class King extends ChessPiece {
     }
 
     @Override
-    public boolean isMoveValid(int fromX, int fromY, int toX, int toY){
+    public boolean isMovePossible(int fromX, int fromY, int toX, int toY){
         boolean result = false;
-        result = super.isMoveValid(fromX, fromY, toX, toY);
+        result = super.isMovePossible(fromX, fromY, toX, toY);
         int dist2 = (int) (Math.pow((toX - fromX), 2) + Math.pow((toY - fromY), 2));
         if (dist2 != 1 && dist2 != 2){
             result = false;

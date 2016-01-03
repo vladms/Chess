@@ -55,7 +55,7 @@ public class TilesAdapter extends RecyclerView.Adapter<TilesAdapter.BaseViewHold
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if(viewType == S_PIECE_VIEW_TYPE){
             View convertView = getInflater(parent.getContext()).inflate(R.layout.tile_layout, parent, false);
-            return new ChessPieceViewHolder(convertView);
+            return new ChessPieceViewHolder(convertView, board);
         }
         return null;
     }
@@ -83,8 +83,10 @@ public class TilesAdapter extends RecyclerView.Adapter<TilesAdapter.BaseViewHold
             } else {
                 holder.mPieceImageView.setImageResource(chessPiece.getBlackDrawableImageId());
             }
-            holder.mBackgroundView.setOnClickListener(board);
+            holder.setIsRecyclable(false);
+            //Log.e("ChessPiece position", String.valueOf(chessPiece.getClass()) + " " + String.valueOf(chessPiece.getX()) + " " + String.valueOf(chessPiece.getY()) + " " + String.valueOf(position));
 
+             holder.itemView.setTag(position);
         }
     }
 
@@ -120,10 +122,11 @@ public class TilesAdapter extends RecyclerView.Adapter<TilesAdapter.BaseViewHold
         private View mBackgroundView;
         private ImageView mPieceImageView;
 
-        public ChessPieceViewHolder(View itemView) {
+        public ChessPieceViewHolder(View itemView, View.OnClickListener onClickListener) {
             super(itemView);
             mBackgroundView = itemView.findViewById(R.id.whiteOrBlackView);
             mPieceImageView = (ImageView) itemView.findViewById(R.id.pieceImageView);
+            itemView.setOnClickListener(onClickListener);
         }
     }
 

@@ -22,11 +22,36 @@ public class Pawn extends ChessPiece {
     }
 
     @Override
-    public boolean isMoveValid(int fromX, int fromY, int toX, int toY) {
-        boolean result = false;
-        result = super.isMoveValid(fromX, fromY, toX, toY);
+    public boolean isMovePossible(int fromX, int fromY, int toX, int toY) {
+        if (super.isMovePossible(fromX, fromY, toX, toY) == false)
+            return false;
 
-        //Add validation for pawn
-        return result;
+        if (fromY == toY && Math.abs(fromX - toX) <= 2) {
+            if (this.isWhite()){
+                if (fromX > toX)
+                    return true;
+                else
+                    return false;
+            } else {
+                if (fromX < toX)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        if (Math.abs(fromY - toY) == 1 && Math.abs(fromX - toX) == 1){
+            if (this.isWhite()){
+                if (fromX > toX)
+                    return true;
+                else
+                    return false;
+            } else {
+                if (fromX < toX)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        return false;
     }
 }
