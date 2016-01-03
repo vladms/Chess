@@ -28,6 +28,7 @@ public class Board implements View.OnClickListener{
         addPiecesOnBoard();
     }
 
+
     public void addPiecesOnBoard() {
         pieces = new ArrayList<>();
         ChessPiece piece = new EmptyPiece(false, 0, 0);
