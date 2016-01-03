@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="start">Start</string>
-    <string name="options">OPTIONS</string>
-    <string name="exit">EXIT</string>
+    <string name="app_name">ChessBonta</string>
+    <string name="action_settings">Settings</string>
 </resources>
