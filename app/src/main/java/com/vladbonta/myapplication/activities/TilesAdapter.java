@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.vladbonta.myapplication.R;
@@ -25,8 +24,10 @@ public class TilesAdapter extends RecyclerView.Adapter<TilesAdapter.BaseViewHold
     private int S_MAX_ROW = 8;
     private int S_PIECE_VIEW_TYPE = 111;
     private ArrayList<Integer> S_BLACKS;
+    private Board board;
 
-    public TilesAdapter(Context context) {
+    public TilesAdapter(Context context, Board board) {
+        this.board = board;
         mContext = context;
         S_BLACKS = new ArrayList<>();
         S_BLACKS.add(1);
@@ -82,7 +83,7 @@ public class TilesAdapter extends RecyclerView.Adapter<TilesAdapter.BaseViewHold
             } else {
                 holder.mPieceImageView.setImageResource(chessPiece.getBlackDrawableImageId());
             }
-            holder.mPieceButton.setOnClickListener(chessPiece);
+            holder.mBackgroundView.setOnClickListener(board);
 
         }
     }
@@ -118,14 +119,11 @@ public class TilesAdapter extends RecyclerView.Adapter<TilesAdapter.BaseViewHold
 
         private View mBackgroundView;
         private ImageView mPieceImageView;
-        private Button mPieceButton;
 
         public ChessPieceViewHolder(View itemView) {
             super(itemView);
             mBackgroundView = itemView.findViewById(R.id.whiteOrBlackView);
             mPieceImageView = (ImageView) itemView.findViewById(R.id.pieceImageView);
-            mPieceButton = (Button) itemView.findViewById(R.id.pieceButton);
-
         }
     }
 

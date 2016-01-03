@@ -1,19 +1,63 @@
 package com.vladbonta.myapplication.activities;
 
+import android.util.Log;
+import android.view.View;
+
+import com.vladbonta.myapplication.model.Bishop;
 import com.vladbonta.myapplication.model.ChessPiece;
+import com.vladbonta.myapplication.model.EmptyPiece;
+import com.vladbonta.myapplication.model.King;
+import com.vladbonta.myapplication.model.Knight;
+import com.vladbonta.myapplication.model.Pawn;
+import com.vladbonta.myapplication.model.Queen;
+import com.vladbonta.myapplication.model.Rook;
 
 import java.util.ArrayList;
 
 /**
  * @author VladBonta on 27/12/15.
  */
-public class Board {
-    private ChessPiece emptyChessPiece;
+public class Board implements View.OnClickListener{
+    private ChessPiece emptyChessPiece = new EmptyPiece(false, 0, 0);
     private ArrayList<ChessPiece> pieces;
+    private Game mGame;
 
-    public Board() {
+    public Board(Game game) {
         super();
+        this.mGame = game;
+        addPiecesOnBoard();
     }
+
+    public void addPiecesOnBoard() {
+        pieces = new ArrayList<>();
+        ChessPiece piece = new EmptyPiece(false, 0, 0);
+        pieces.add(new Rook(false, 1, 1));
+        pieces.add(new Knight(false, 1, 2));
+        pieces.add(new Bishop(false, 1, 3));
+        pieces.add(new Queen(false, 1, 4));
+        pieces.add(new King(false, 1, 5));
+        pieces.add(new Bishop(false, 1, 6));
+        pieces.add(new Knight(false, 1, 7));
+        pieces.add(new Rook(false, 1, 8));
+        for(int i = 1;i <= 8; i++){
+            pieces.add(new Pawn(false, 2, i));
+        }
+        for(int i = 0;i < 32; i++){
+            pieces.add(new EmptyPiece(false, 3 + i / 8, 1 + i % 8));
+        }
+        for(int i = 1;i <= 8; i++){
+            pieces.add(new Pawn(true, 7, i));
+        }
+        pieces.add(new Rook(true, 8, 1));
+        pieces.add(new Knight(true, 8, 2));
+        pieces.add(new Bishop(true, 8, 3));
+        pieces.add(new Queen(true, 8, 4));
+        pieces.add(new King(true, 8, 5));
+        pieces.add(new Bishop(true, 8, 6));
+        pieces.add(new Knight(true, 8, 7));
+        pieces.add(new Rook(true, 8, 8));
+    }
+
 
     public void clearPieceAtPosition(int x, int y){
         emptyChessPiece.setX(x);
@@ -35,4 +79,12 @@ public class Board {
         return pieces;
     }
 
+    @Override
+
+    public void onClick(View view) {
+        Log.d("myTag", String.valueOf(view) + " " + String.valueOf(view.getId()) + "on click view");
+        Log.d("myTag", String.valueOf(view.getId()) + " " + String.valueOf(view.getPivotY()) + "on click view");
+
+        //mGame.handlePieceTouch(view);
+    }
 }

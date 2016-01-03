@@ -1,17 +1,24 @@
 package com.vladbonta.myapplication.model;
 
 import com.vladbonta.myapplication.R;
-import com.vladbonta.myapplication.activities.Game;
 
 /**
  * @author VladBonta on 27/12/15.
  */
 public class Queen extends ChessPiece {
-    public Queen(Game game, boolean isWhite, int x, int y) {
-        super(game, isWhite, x, y);
+    public Queen(boolean isWhite, int x, int y) {
+        super(isWhite, x, y);
         this.setIsEmpty(false);
-        setWhiteDrawableImageId(R.drawable.wqueen);
-        setBlackDrawableImageId(R.drawable.bqueen);
+    }
+
+    @Override
+    public int getWhiteDrawableImageId() {
+        return R.drawable.wqueen;
+    }
+
+    @Override
+    public int getBlackDrawableImageId() {
+        return R.drawable.bqueen;
     }
 
     @Override

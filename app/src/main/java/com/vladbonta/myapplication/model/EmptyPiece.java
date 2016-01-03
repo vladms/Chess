@@ -1,32 +1,28 @@
 package com.vladbonta.myapplication.model;
 
-import com.vladbonta.myapplication.R;
-
 /**
- * @author VladBonta on 27/12/15.
+ * @author VladBonta on 03/01/16.
  */
-public class Pawn extends ChessPiece {
-    public Pawn(boolean isWhite, int x, int y) {
+public class EmptyPiece extends ChessPiece{
+    public EmptyPiece(boolean isWhite, int x, int y){
         super(isWhite, x, y);
-        this.setIsEmpty(false);
+        this.setIsEmpty(true);
     }
 
     @Override
     public int getWhiteDrawableImageId() {
-        return R.drawable.wpawn;
+        return 0;
     }
 
     @Override
     public int getBlackDrawableImageId() {
-        return R.drawable.bpawn;
+        return 0;
     }
 
     @Override
     public boolean isMoveValid(int fromX, int fromY, int toX, int toY) {
         boolean result = false;
         result = super.isMoveValid(fromX, fromY, toX, toY);
-
-        //Add validation for pawn
         return result;
     }
 }

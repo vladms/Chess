@@ -1,17 +1,24 @@
 package com.vladbonta.myapplication.model;
 
 import com.vladbonta.myapplication.R;
-import com.vladbonta.myapplication.activities.Game;
 
 /**
  * @author VladBonta on 27/12/15.
  */
 public class Knight extends ChessPiece {
-    public Knight(Game game, boolean isWhite, int x, int y){
-        super(game, isWhite, x, y);
+    public Knight(boolean isWhite, int x, int y){
+        super(isWhite, x, y);
         this.setIsEmpty(false);
-        setWhiteDrawableImageId(R.drawable.wknight);
-        setBlackDrawableImageId(R.drawable.bknight);
+    }
+
+    @Override
+    public int getWhiteDrawableImageId() {
+        return R.drawable.wknight;
+    }
+
+    @Override
+    public int getBlackDrawableImageId() {
+        return R.drawable.bknight;
     }
 
     @Override

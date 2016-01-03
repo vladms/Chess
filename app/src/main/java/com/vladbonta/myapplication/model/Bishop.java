@@ -1,19 +1,24 @@
 package com.vladbonta.myapplication.model;
 
 import com.vladbonta.myapplication.R;
-import com.vladbonta.myapplication.activities.Game;
 
 /**
  * @author VladBonta on 27/12/15.
  */
 public class Bishop extends ChessPiece {
+    public Bishop(boolean isWhite, int x, int y){
+        super(isWhite, x, y);
+        this.setIsEmpty(false);
+    }
 
+    @Override
+      public int getWhiteDrawableImageId() {
+        return R.drawable.wbishop;
+    }
 
-    public Bishop(Game game, boolean isWhite, int x, int y){
-        super(game, isWhite, x, y);
-
-        setWhiteDrawableImageId(R.drawable.wbishop);
-        setBlackDrawableImageId(R.drawable.bbishop);
+    @Override
+    public int getBlackDrawableImageId() {
+        return R.drawable.bbishop;
     }
 
     @Override

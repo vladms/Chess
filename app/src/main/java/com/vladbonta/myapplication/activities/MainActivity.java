@@ -32,9 +32,6 @@ public class MainActivity extends AppCompatActivity {
         Game game = new Game(mRecyclerView, MainActivity.this);
     }
 
-
-
-
 public void showDialog(String title, String content){
     AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
     alertDialog.setTitle(title);
