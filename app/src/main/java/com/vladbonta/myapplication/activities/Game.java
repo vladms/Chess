@@ -112,8 +112,6 @@ public class Game {
 
     private void clearPieceAtPosition(int x, int y){
         emptyChessPiece = new ChessPiece(this, false, x, y);
-
-
         int pieceIndex = (x - 1) * 8 + (y - 1);
         Log.d("myTag", String.valueOf(pieces));
 
