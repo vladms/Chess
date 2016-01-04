@@ -1,5 +1,7 @@
 package com.vladbonta.myapplication.model;
 
+import android.util.Log;
+
 import com.vladbonta.myapplication.R;
 
 /**
@@ -25,8 +27,10 @@ public class King extends ChessPiece {
     public boolean isMovePossible(int fromX, int fromY, int toX, int toY){
         boolean result = false;
         result = super.isMovePossible(fromX, fromY, toX, toY);
-        int dist2 = (int) (Math.pow((toX - fromX), 2) + Math.pow((toY - fromY), 2));
-        if (dist2 != 1 && dist2 != 2){
+        int dist = (int) (Math.pow((toX - fromX), 2) + Math.pow((toY - fromY), 2));
+        Log.d("kingValidation", "dist=" + String.valueOf(dist));
+
+        if (dist != 1 && dist != 2){
             result = false;
         }
         return result;

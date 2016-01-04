@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class Board implements View.OnClickListener{
     private EmptyPiece emptyChessPiece = new EmptyPiece(false, 0, 0);
-    private static ArrayList<ChessPiece> pieces;
+    private ArrayList<ChessPiece> pieces;
     private Game mGame;
 
     public Board(Game game) {

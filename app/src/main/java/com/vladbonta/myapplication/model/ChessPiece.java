@@ -10,11 +10,12 @@ public abstract class ChessPiece {
     private boolean isWhite;
     private boolean isEmpty;
     private boolean isSelected;
-
+    private boolean moved;
     public ChessPiece(boolean isWhite, int x, int y){
         super();
         this.isEmpty = true;
         this.isWhite = isWhite;
+        moved = false;
         this.x = x;
         this.y = y;
     }
@@ -72,4 +73,11 @@ public abstract class ChessPiece {
         this.isEmpty = isEmpty;
     }
 
+    public boolean isMoved() {
+        return moved;
+    }
+
+    public void setMoved(boolean moved) {
+        this.moved = moved;
+    }
 }
