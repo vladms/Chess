@@ -1,5 +1,7 @@
 package com.vladbonta.myapplication.model;
 
+import java.util.ArrayList;
+
 /**
  * @author VladBonta on 23/12/15.
  */
@@ -27,6 +29,12 @@ public abstract class ChessPiece {
         if(toX <= 0 || toX > 8 || fromX <= 0 || fromX > 8 || toY <= 0 || toY > 8 || fromY <= 0 || fromY > 8)
             result =  false;
         return result;
+    }
+
+
+    public ArrayList<Integer> getPossibleMovesList(int fromX, int fromY, int toX, int toY){
+        ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
+        return possiblePositions;
     }
 
     public int getX() {

@@ -1,6 +1,8 @@
 package com.vladbonta.myapplication.activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -13,83 +15,295 @@ import java.util.ArrayList;
 /**
  * @author VladBonta on 27/12/15.
  */
+
 public class Game {
+    public enum GameState {
+        PLAYING(1),
+        WHITEINCHESS(2),
+        BLACKINCHESS(3),
+        CHECKMATE(4);
+
+        private int value;
+        private GameState(int value) { this.value = value; }
+    };
+
     private Board board = new Board(this);
+    private Board testBoard = new Board();
+
     private TilesAdapter mTilesAdapter;
     private RecyclerView mRecyclerView;
     private ChessPiece lastPressedPiece;
     private boolean whitePlayerTurn;
+    private GameState gameState;
+    private Context mContext;
+
+
     ArrayList<ChessPiece> pieces;
+
     public Game(RecyclerView recyclerView, Context context) {
+        mContext =  context;
         lastPressedPiece = null;
         whitePlayerTurn = true;
         mRecyclerView = recyclerView;
         mTilesAdapter = new TilesAdapter(context, board);
         mRecyclerView.setAdapter(mTilesAdapter);
         updateBoard();
+        gameState = GameState.PLAYING;
+
     }
 
-
     public void updateBoard(){
+        copyTestToGoodPieces();
+       // board.setPieces(testBoard.getPieces());
         mTilesAdapter.setChessPieces(board.getPieces());
         mTilesAdapter.notifyDataSetChanged();
     }
 
+    private void copyGoodToTestPieces(){
+        ArrayList<ChessPiece> pieces = board.getPieces();
+        ArrayList<ChessPiece> tempPieces = new ArrayList<ChessPiece>();
+        for (int i = 0;i < pieces.size();i++){
+            ChessPiece chessPiece = pieces.get(i);
+            tempPieces.add(chessPiece);
+        }
+        testBoard.setPieces(tempPieces);
+
+    }
+
+    private void copyTestToGoodPieces(){
+        ArrayList<ChessPiece> pieces = testBoard.getPieces();
+        ArrayList<ChessPiece> tempPieces = new ArrayList<ChessPiece>();
+        for (int i = 0;i < pieces.size();i++){
+            ChessPiece chessPiece = pieces.get(i);
+            tempPieces.add(chessPiece);
+        }
+        board.setPieces(tempPieces);
+    }
+
     public void handlePieceTouch(ChessPiece chessPiece) {
+        Log.e("Check", "1");
 
+        /*if (isCheckAtBlack() || isCheckAtWhite()){
+            Log.e("Check", "2");
+            showDialog("Check", "Someone made a check!");
+        }*/
        // Log.d("handlePieceTouch", String.valueOf(chessPiece) + "handlePieceTouch");
-
         if (lastPressedPiece == null){
+            Log.e("Check", "3");
             //validate selected piece to move
             Log.d("handlePieceTouch", "Validate selected piece to move");
 
             if (!chessPiece.isEmpty() && selectedPieceBelongsToPlayingUser(chessPiece)){
+                Log.e("Check", "4");
                 chessPiece.setIsSelected(true);
                 lastPressedPiece = chessPiece;
                 Log.d("handlePieceTouch", "Moving piece selected");
+                updateBoard();
             }
         } else if (lastPressedPiece.equals(chessPiece)){
+            Log.e("Check", "5");
             Log.d("handlePieceTouch", "Pressed the same piece");
             chessPiece.setIsSelected(false);
             lastPressedPiece = null;
+            updateBoard();
         } else {
+            Log.e("Check", "6");
             //Validate the next position for selected piece
+            copyGoodToTestPieces();
+           // testBoard.setPieces(board.getPieces());
+            boolean clearPathForSelectedPiece = true;
+            ArrayList<Integer> possiblePositions = lastPressedPiece.getPossibleMovesList(lastPressedPiece.getX(), lastPressedPiece.getY(), chessPiece.getX(), chessPiece.getY());
+            for (int index = 0; index < possiblePositions.size(); index++){
+                Integer positionIndex = possiblePositions.get(index);
+                ChessPiece piece = testBoard.getPieces().get(positionIndex);
+                if (!piece.isEmpty()){
+                    clearPathForSelectedPiece = false;
+                }
+            }
+            if (clearPathForSelectedPiece) {
+                Log.e("Check", "7");
+                //Next position is valid if it is an empty place or a different color piece
+                if (chessPiece.isWhite() != lastPressedPiece.isWhite() || chessPiece.isEmpty()) {
+                    Log.e("Check", "8");
+                    Log.d("handlePieceTouch", "Next position is empty or the other player piece");
+                    //Verify it is a possible move for given chessPiece
+                    if (lastPressedPiece.isMovePossible(lastPressedPiece.getX(), lastPressedPiece.getY(), chessPiece.getX(), chessPiece.getY())) {
+                        Log.e("Check", "9");
+                        Log.d("handlePieceTouch", "Possible move for chessPiece: " + String.valueOf(chessPiece));
+                        //Validate movement for chess cases
+                        movePieceAtPosition(false, lastPressedPiece, chessPiece.getX(), chessPiece.getY());
+                        Log.d("handlePieceTouch", "Check at black: " + String.valueOf(isCheckAtBlack()) + "Check At white: " + String.valueOf(isCheckAtWhite()) + "lastpressedpieceisWhite: " + String.valueOf(lastPressedPiece.isWhite()));
+                        Boolean isCheckAtWhite = isCheckAtWhite();
+                        Boolean isCheckAtBlack = isCheckAtBlack();
+                        if (whitePlayerTurn){
+                            if (isCheckAtWhite){
+                                Log.e("Check", "10");
+                                showDialog("Check", "YOUR KING is in check!");
+                                lastPressedPiece = null;
+                                copyGoodToTestPieces();
+                                // testBoard.setPieces(board.getPieces());
+                                updateBoard();
+                            } else if (isCheckAtBlack) {
+                                Log.e("Check", "10");
+                                showDialog("Check", "White made a check!");
+                                chessPiece.setMoved(true);
+                                whitePlayerTurn = !whitePlayerTurn;
+                                lastPressedPiece = null;
+                                updateBoard();
+                            } else {
+                                Log.e("Check", "10");
+                                chessPiece.setMoved(true);
+                                whitePlayerTurn = !whitePlayerTurn;
+                                lastPressedPiece = null;
+                                updateBoard();
+                            }
+                        } else {
+                            if (isCheckAtBlack){
+                                Log.e("Check", "10");
+                                showDialog("Check", "YOUR KING is in check!");
+                                lastPressedPiece = null;
+                                copyGoodToTestPieces();
+                                // testBoard.setPieces(board.getPieces());
+                                updateBoard();
+                            } else if (isCheckAtWhite) {
+                                Log.e("Check", "10");
+                                showDialog("Check", "Black made a check!");
+                                chessPiece.setMoved(true);
+                                whitePlayerTurn = !whitePlayerTurn;
+                                lastPressedPiece = null;
+                                updateBoard();
+                            } else {
+                                Log.e("Check", "10");
+                                chessPiece.setMoved(true);
+                                whitePlayerTurn = !whitePlayerTurn;
+                                lastPressedPiece = null;
+                                updateBoard();
+                            }
 
-            //Next position is valid if it is an empty place or a different color piece
-            if (chessPiece.isWhite() != lastPressedPiece.isWhite() || chessPiece.isEmpty()) {
-                Log.d("handlePieceTouch", "Next position is empty or the other player piece");
-                //Verify it is a possible move for given chessPiece
-                if (lastPressedPiece.isMovePossible(lastPressedPiece.getX(), lastPressedPiece.getY(), chessPiece.getX(), chessPiece.getY())) {
-                    Log.d("handlePieceTouch", "Possible move for chessPiece: " + String.valueOf(chessPiece));
-                    if (chessPiece.getClass() == King.class){
-                        chessPiece.setMoved(true);
+
+                        }
+                       /* if ((whitePlayerTurn && isCheckAtWhite()) || (!whitePlayerTurn && isCheckAtBlack())){
+                            Log.e("Check", "10");
+                            showDialog("Check", "YOUR KING is in check!");
+                            lastPressedPiece = null;
+                            copyGoodToTestPieces();
+                           // testBoard.setPieces(board.getPieces());
+                            updateBoard();
+                        } else {
+                            Log.e("Check", "10");
+                            if (whitePlayerTurn){
+                                showDialog("Check", "White made a check!");
+                            } else {
+                                showDialog("Check", "Black made a check!");
+                            }
+                            chessPiece.setMoved(true);
+                            whitePlayerTurn = !whitePlayerTurn;
+                            lastPressedPiece = null;
+                            updateBoard();
+                        }*/
+                    } else {
+                        Log.d("handlePieceTouch", "Piece move is not possible");
+                        //Check for king "rocada" movement
+                        if (lastPressedPiece.getClass() == King.class && !lastPressedPiece.isMoved()) {
+                            checkForRocada(chessPiece.getX(), chessPiece.getY());
+                            if ((whitePlayerTurn && isCheckAtWhite()) || (!whitePlayerTurn && isCheckAtBlack())) {
+                                Log.e("Check", "10");
+                                showDialog("Check", "King is in check!");
+                                copyGoodToTestPieces();
+                                //testBoard.setPieces(board.getPieces());
+                                //updateBoard();
+                            } else {
+                                Log.e("Check", "10");
+                                lastPressedPiece = null;
+                                updateBoard();
+                            }
+                        }
                     }
-                    //Check for
-                    //Validate movement for chess cases
-                    movePieceAtPosition(lastPressedPiece, chessPiece.getX(), chessPiece.getY());
-                    whitePlayerTurn = !whitePlayerTurn;
                 } else {
-                    Log.d("handlePieceTouch", "Piece move is not possible");
-                    //Check for king "rocada" movement
-                    if (lastPressedPiece.getClass() == King.class && !lastPressedPiece.isMoved()){
-                        checkForRocada(chessPiece.getX(), chessPiece.getY());
-                    }
+                    Log.d("handlePieceTouch", "Next position is not valid: not empty or not the other player piece");
                 }
             } else {
-                Log.d("handlePieceTouch", "Next position is not valid: not empty or not the other player piece");
+                Log.d("handlePieceTouch", "Path is not clear");
             }
 
         }
-        updateBoard();
     }
 
-    public void movePieceAtPosition(ChessPiece chessPiece, int xNextPosition, int yNextPosition){
+    public boolean isCheckAtWhite(){
+        ArrayList<ChessPiece> pieces = testBoard.getPieces();
+        boolean result = false;
+        ChessPiece whiteKing = null;
+        for (int index = 0; index < pieces.size(); index++) {
+            ChessPiece chessPiece = pieces.get(index);
+            if (chessPiece.isWhite() && chessPiece.getClass() == King.class){
+                whiteKing = chessPiece;
+            }
+        }
+        for (int index = 0; index < pieces.size(); index++){
+            ChessPiece chessPiece = pieces.get(index);
+            if (!chessPiece.isWhite()){
+                boolean clearPathForSelectedPiece = true;
+                ArrayList<Integer> possiblePositions = chessPiece.getPossibleMovesList(chessPiece.getX(), chessPiece.getY(), whiteKing.getX(), whiteKing.getY());
+                for (int index2 = 0; index2 < possiblePositions.size(); index2++){
+                    Integer positionIndex = possiblePositions.get(index2);
+                    ChessPiece piece = testBoard.getPieces().get(positionIndex);
+                    if (!piece.isEmpty()){
+                        clearPathForSelectedPiece = false;
+                    }
+                }
+                //Check not to jump over pieces and pawn cases and king cases
+                if (clearPathForSelectedPiece && chessPiece.isMovePossible(chessPiece.getX(), chessPiece.getY(), whiteKing.getX(), whiteKing.getY())){
+                    result = true;
+                }
+            }
+        }
+        return result;
+    }
+
+    public boolean isCheckAtBlack(){
+        ArrayList<ChessPiece> pieces = testBoard.getPieces();
+        boolean result = false;
+        ChessPiece blackKing = null;
+        for (int index = 0; index < pieces.size(); index++) {
+            ChessPiece chessPiece = pieces.get(index);
+            if (!chessPiece.isWhite() && chessPiece.getClass() == King.class){
+                blackKing = chessPiece;
+            }
+        }
+        for (int index = 0; index < pieces.size(); index++){
+            ChessPiece chessPiece = pieces.get(index);
+            if (chessPiece.isWhite()){
+                boolean clearPathForSelectedPiece = true;
+                ArrayList<Integer> possiblePositions = chessPiece.getPossibleMovesList(chessPiece.getX(), chessPiece.getY(), blackKing.getX(), blackKing.getY());
+                for (int index2 = 0; index2 < possiblePositions.size(); index2++){
+                    Integer positionIndex = possiblePositions.get(index2);
+                    ChessPiece piece = testBoard.getPieces().get(positionIndex);
+                    if (!piece.isEmpty()){
+                        clearPathForSelectedPiece = false;
+                    }
+                }
+                //Check not to jump over pieces and pawn cases and king cases
+                if (clearPathForSelectedPiece && chessPiece.isMovePossible(chessPiece.getX(), chessPiece.getY(), blackKing.getX(), blackKing.getY())){
+                    result = true;
+                }
+            }
+        }
+        return result;
+    }
+
+    public boolean checkForCheckmate(){
+        return false;
+    }
+
+    public void movePieceAtPosition(boolean deleteLastPressedPiece,ChessPiece chessPiece, int xNextPosition, int yNextPosition){
+        Log.e("NextPosition", "x:"+ xNextPosition + "y:"+yNextPosition);
+        Log.e("lastPressedPiece", "x:"+ lastPressedPiece.getX()+ "y:"+lastPressedPiece.getY());
+
         lastPressedPiece.setIsSelected(false);
-        board.clearPieceAtPosition(chessPiece.getX(), chessPiece.getY());
-        board.changePieceAtPosition(xNextPosition, yNextPosition, chessPiece);
-        lastPressedPiece = null;
-        // Log.d("lastPressedPiece", String.valueOf(lastPressedPiece.getX()) + " " + String.valueOf(lastPressedPiece.getY()));
-        //  Log.d("coordinates chessPiece", String.valueOf(xChessPiece) + " " + String.valueOf(yChessPiece));
+        testBoard.clearPieceAtPosition(chessPiece.getX(), chessPiece.getY());
+        testBoard.changePieceAtPosition(xNextPosition, yNextPosition, chessPiece);
+        if (deleteLastPressedPiece)
+            lastPressedPiece = null;
     }
 
     private void checkForRocada(int x, int y){
@@ -112,20 +326,18 @@ public class Game {
 
     private void makeRightRocada(int rookIndex){
         lastPressedPiece.setMoved(true);
-        movePieceAtPosition(lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY() + 2);
+        movePieceAtPosition(false, lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY() + 2);
         //get ROOK piece
         lastPressedPiece = board.getPieces().get(rookIndex);
-        movePieceAtPosition(lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY() - 2);
-        whitePlayerTurn = !whitePlayerTurn;
+        movePieceAtPosition(false, lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY() - 2);
     }
 
     private void makeLeftRocada(int rookIndex){
         lastPressedPiece.setMoved(true);
-        movePieceAtPosition(lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY() - 2);
+        movePieceAtPosition(false, lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY() - 2);
         //get ROOK piece
         lastPressedPiece = board.getPieces().get(rookIndex);
-        movePieceAtPosition(lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY()  + 3);
-        whitePlayerTurn = !whitePlayerTurn;
+        movePieceAtPosition(false, lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY()  + 3);
     }
 
 
@@ -134,15 +346,26 @@ public class Game {
 
         return result;
     }
+
+    public void showDialog(String title, String content){
+        AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(content);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
     private boolean selectedPieceBelongsToPlayingUser(ChessPiece pressedChessPiece){
         boolean result = false;
         Log.d("myTag", "belongsToPlayinguser");
-        Log.d("myTag", String.valueOf(whitePlayerTurn));
         if (pressedChessPiece.isWhite() == whitePlayerTurn){
             result = true;
         }
-        Log.d("myTag", "result == " + String.valueOf(result));
-
         return result;
     }
 

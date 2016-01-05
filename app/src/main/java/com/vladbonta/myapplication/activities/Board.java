@@ -20,7 +20,10 @@ public class Board implements View.OnClickListener{
     private EmptyPiece emptyChessPiece = new EmptyPiece(false, 0, 0);
     private ArrayList<ChessPiece> pieces;
     private Game mGame;
-
+    public Board(){
+        super();
+        addPiecesOnBoard();
+    }
     public Board(Game game) {
         super();
         this.mGame = game;
@@ -75,7 +78,17 @@ public class Board implements View.OnClickListener{
     }
 
     public ArrayList<ChessPiece> getPieces(){
-        return pieces;
+        ArrayList<ChessPiece> tmpPieces = new ArrayList<>();
+        for (int i = 0;i < pieces.size(); i++){
+            ChessPiece piece = pieces.get(i);
+            piece.setX(i / 8 + 1);
+            piece.setY(1 + i % 8);
+            tmpPieces.add(piece);
+        }
+        return tmpPieces;
+    }
+    public void setPieces(ArrayList<ChessPiece> pieces){
+        this.pieces = pieces;
     }
 
     @Override

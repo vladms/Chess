@@ -22,7 +22,6 @@ public class EmptyPiece extends ChessPiece{
     @Override
     public boolean isMovePossible(int fromX, int fromY, int toX, int toY) {
         boolean result = false;
-        result = super.isMovePossible(fromX, fromY, toX, toY);
-        return true;
+        return result;
     }
 }

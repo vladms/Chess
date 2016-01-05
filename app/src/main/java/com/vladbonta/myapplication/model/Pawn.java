@@ -2,6 +2,8 @@ package com.vladbonta.myapplication.model;
 
 import com.vladbonta.myapplication.R;
 
+import java.util.ArrayList;
+
 /**
  * @author VladBonta on 27/12/15.
  */
@@ -25,8 +27,10 @@ public class Pawn extends ChessPiece {
     public boolean isMovePossible(int fromX, int fromY, int toX, int toY) {
         if (super.isMovePossible(fromX, fromY, toX, toY) == false)
             return false;
+//        Log.d("handlePieceTouch", "Pawn movement: " + String.valueOf(fromX) + " " + fromY + " " + toX + " " + toY);
 
-        if (fromY == toY && Math.abs(fromX - toX) <= 2) {
+
+        if (fromY == toY && Math.abs(fromX - toX) == 1) {
             if (this.isWhite()){
                 if (fromX > toX)
                     return true;
@@ -34,6 +38,18 @@ public class Pawn extends ChessPiece {
                     return false;
             } else {
                 if (fromX < toX)
+                    return true;
+                else
+                    return false;
+            }
+        } else if(fromY == toY && Math.abs(fromX - toX) == 2){
+            if (this.isWhite() && fromX == 7){
+                if (fromX > toX)
+                    return true;
+                else
+                    return false;
+            } else if (!this.isWhite() && fromX == 2){
+                if (fromX < toX )
                     return true;
                 else
                     return false;
@@ -53,5 +69,20 @@ public class Pawn extends ChessPiece {
             }
         }
         return false;
+    }
+
+    @Override
+    public ArrayList<Integer> getPossibleMovesList(int fromX, int fromY, int toX, int toY) {
+        ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
+        if (this.isMovePossible(fromX, fromY, toX, toY)){
+            if (fromY == toY && Math.abs(fromX - toX) == 2) {
+                if (this.isWhite()) {
+                    possiblePositions.add((fromX - 2) * 8 + (fromY - 1));
+                } else {
+                    possiblePositions.add(fromX * 8 + (fromY - 1));
+                }
+            }
+        }
+        return possiblePositions;
     }
 }
