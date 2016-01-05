@@ -15,18 +15,8 @@ import java.util.ArrayList;
 /**
  * @author VladBonta on 27/12/15.
  */
-
+//TO DO - Add logic for pawn attack, paawn transformation, checkmate, structure validation in classes, structure project in packages
 public class Game {
-    public enum GameState {
-        PLAYING(1),
-        WHITEINCHESS(2),
-        BLACKINCHESS(3),
-        CHECKMATE(4);
-
-        private int value;
-        private GameState(int value) { this.value = value; }
-    };
-
     private Board board = new Board(this);
     private Board testBoard = new Board();
 
@@ -34,7 +24,6 @@ public class Game {
     private RecyclerView mRecyclerView;
     private ChessPiece lastPressedPiece;
     private boolean whitePlayerTurn;
-    private GameState gameState;
     private Context mContext;
 
 
@@ -48,13 +37,10 @@ public class Game {
         mTilesAdapter = new TilesAdapter(context, board);
         mRecyclerView.setAdapter(mTilesAdapter);
         updateBoard();
-        gameState = GameState.PLAYING;
-
     }
 
     public void updateBoard(){
         copyTestToGoodPieces();
-       // board.setPieces(testBoard.getPieces());
         mTilesAdapter.setChessPieces(board.getPieces());
         mTilesAdapter.notifyDataSetChanged();
     }
@@ -81,33 +67,23 @@ public class Game {
     }
 
     public void handlePieceTouch(ChessPiece chessPiece) {
-        Log.e("Check", "1");
-
-        /*if (isCheckAtBlack() || isCheckAtWhite()){
-            Log.e("Check", "2");
-            showDialog("Check", "Someone made a check!");
-        }*/
        // Log.d("handlePieceTouch", String.valueOf(chessPiece) + "handlePieceTouch");
         if (lastPressedPiece == null){
-            Log.e("Check", "3");
             //validate selected piece to move
             Log.d("handlePieceTouch", "Validate selected piece to move");
 
             if (!chessPiece.isEmpty() && selectedPieceBelongsToPlayingUser(chessPiece)){
-                Log.e("Check", "4");
                 chessPiece.setIsSelected(true);
                 lastPressedPiece = chessPiece;
                 Log.d("handlePieceTouch", "Moving piece selected");
                 updateBoard();
             }
         } else if (lastPressedPiece.equals(chessPiece)){
-            Log.e("Check", "5");
             Log.d("handlePieceTouch", "Pressed the same piece");
             chessPiece.setIsSelected(false);
             lastPressedPiece = null;
             updateBoard();
         } else {
-            Log.e("Check", "6");
             //Validate the next position for selected piece
             copyGoodToTestPieces();
            // testBoard.setPieces(board.getPieces());
@@ -121,14 +97,12 @@ public class Game {
                 }
             }
             if (clearPathForSelectedPiece) {
-                Log.e("Check", "7");
                 //Next position is valid if it is an empty place or a different color piece
                 if (chessPiece.isWhite() != lastPressedPiece.isWhite() || chessPiece.isEmpty()) {
                     Log.e("Check", "8");
                     Log.d("handlePieceTouch", "Next position is empty or the other player piece");
                     //Verify it is a possible move for given chessPiece
                     if (lastPressedPiece.isMovePossible(lastPressedPiece.getX(), lastPressedPiece.getY(), chessPiece.getX(), chessPiece.getY())) {
-                        Log.e("Check", "9");
                         Log.d("handlePieceTouch", "Possible move for chessPiece: " + String.valueOf(chessPiece));
                         //Validate movement for chess cases
                         movePieceAtPosition(false, lastPressedPiece, chessPiece.getX(), chessPiece.getY());
@@ -137,21 +111,18 @@ public class Game {
                         Boolean isCheckAtBlack = isCheckAtBlack();
                         if (whitePlayerTurn){
                             if (isCheckAtWhite){
-                                Log.e("Check", "10");
                                 showDialog("Check", "YOUR KING is in check!");
                                 lastPressedPiece = null;
                                 copyGoodToTestPieces();
                                 // testBoard.setPieces(board.getPieces());
                                 updateBoard();
                             } else if (isCheckAtBlack) {
-                                Log.e("Check", "10");
                                 showDialog("Check", "White made a check!");
                                 chessPiece.setMoved(true);
                                 whitePlayerTurn = !whitePlayerTurn;
                                 lastPressedPiece = null;
                                 updateBoard();
                             } else {
-                                Log.e("Check", "10");
                                 chessPiece.setMoved(true);
                                 whitePlayerTurn = !whitePlayerTurn;
                                 lastPressedPiece = null;
@@ -159,61 +130,33 @@ public class Game {
                             }
                         } else {
                             if (isCheckAtBlack){
-                                Log.e("Check", "10");
                                 showDialog("Check", "YOUR KING is in check!");
                                 lastPressedPiece = null;
                                 copyGoodToTestPieces();
                                 // testBoard.setPieces(board.getPieces());
                                 updateBoard();
                             } else if (isCheckAtWhite) {
-                                Log.e("Check", "10");
                                 showDialog("Check", "Black made a check!");
                                 chessPiece.setMoved(true);
                                 whitePlayerTurn = !whitePlayerTurn;
                                 lastPressedPiece = null;
                                 updateBoard();
                             } else {
-                                Log.e("Check", "10");
                                 chessPiece.setMoved(true);
                                 whitePlayerTurn = !whitePlayerTurn;
                                 lastPressedPiece = null;
                                 updateBoard();
                             }
-
-
                         }
-                       /* if ((whitePlayerTurn && isCheckAtWhite()) || (!whitePlayerTurn && isCheckAtBlack())){
-                            Log.e("Check", "10");
-                            showDialog("Check", "YOUR KING is in check!");
-                            lastPressedPiece = null;
-                            copyGoodToTestPieces();
-                           // testBoard.setPieces(board.getPieces());
-                            updateBoard();
-                        } else {
-                            Log.e("Check", "10");
-                            if (whitePlayerTurn){
-                                showDialog("Check", "White made a check!");
-                            } else {
-                                showDialog("Check", "Black made a check!");
-                            }
-                            chessPiece.setMoved(true);
-                            whitePlayerTurn = !whitePlayerTurn;
-                            lastPressedPiece = null;
-                            updateBoard();
-                        }*/
                     } else {
                         Log.d("handlePieceTouch", "Piece move is not possible");
                         //Check for king "rocada" movement
                         if (lastPressedPiece.getClass() == King.class && !lastPressedPiece.isMoved()) {
                             checkForRocada(chessPiece.getX(), chessPiece.getY());
                             if ((whitePlayerTurn && isCheckAtWhite()) || (!whitePlayerTurn && isCheckAtBlack())) {
-                                Log.e("Check", "10");
                                 showDialog("Check", "King is in check!");
                                 copyGoodToTestPieces();
-                                //testBoard.setPieces(board.getPieces());
-                                //updateBoard();
                             } else {
-                                Log.e("Check", "10");
                                 lastPressedPiece = null;
                                 updateBoard();
                             }
@@ -298,7 +241,6 @@ public class Game {
     public void movePieceAtPosition(boolean deleteLastPressedPiece,ChessPiece chessPiece, int xNextPosition, int yNextPosition){
         Log.e("NextPosition", "x:"+ xNextPosition + "y:"+yNextPosition);
         Log.e("lastPressedPiece", "x:"+ lastPressedPiece.getX()+ "y:"+lastPressedPiece.getY());
-
         lastPressedPiece.setIsSelected(false);
         testBoard.clearPieceAtPosition(chessPiece.getX(), chessPiece.getY());
         testBoard.changePieceAtPosition(xNextPosition, yNextPosition, chessPiece);
@@ -307,6 +249,7 @@ public class Game {
     }
 
     private void checkForRocada(int x, int y){
+        //Check if king will not be in check on rocada moves
         if (x == lastPressedPiece.getX() && y == lastPressedPiece.getY() + 2){
             int index = (lastPressedPiece.getX() - 1) * 8 + (lastPressedPiece.getY() - 1);
             if (board.getPieces().get(index + 1).isEmpty() && board.getPieces().get(index + 2). isEmpty()) {
@@ -340,7 +283,6 @@ public class Game {
         movePieceAtPosition(false, lastPressedPiece, lastPressedPiece.getX(), lastPressedPiece.getY()  + 3);
     }
 
-
     private boolean selectedPieceIsValid(ChessPiece chessPiece){
         boolean result = false;
 
@@ -368,7 +310,6 @@ public class Game {
         }
         return result;
     }
-
 
     public Board getBoard() {
         return board;
